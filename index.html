@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BR Bakery - Sweet Order System</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN with custom config -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            burgundy: {
+              50: '#fdf2f4',
+              100: '#fbe6e9',
+              200: '#f7cfd6',
+              300: '#f0a8b6',
+              400: '#e5778f',
+              500: '#d54d6b',
+              600: '#ba3251',
+              700: '#9b2440',
+              800: '#812137',
+              900: '#6d1f32',
+              950: '#430d1a',
+            },
+            cream: {
+              50: '#fdfbf7',
+              100: '#f9f6ee',
+              200: '#f3ece0',
+              300: '#e8dcce',
+              400: '#d9c6b3',
+              500: '#c6ad97',
+              600: '#b2957e',
+              700: '#957963',
+              800: '#7a6352',
+              900: '#645143',
+            },
+            gold: {
+              400: '#f3c74d',
+              500: '#d4af37',
+              600: '#b89428',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(109, 31, 50, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04)',
+            'card': '0 10px 30px -4px rgba(109, 31, 50, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.04)',
+            'floating': '0 20px 40px -10px rgba(67, 13, 26, 0.25)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="icon" type="image/png" href="logo.png">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#FAF7F2] text-stone-800 font-sans min-h-screen selection:bg-burgundy-900 selection:text-cream-100 antialiased flex flex-col">
+
+  <!-- Top Announcement Bar -->
+  <header class="bg-gradient-to-r from-burgundy-950 via-burgundy-900 to-burgundy-950 text-cream-100 shadow-md sticky top-0 z-40 border-b border-burgundy-800/60 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white p-0.5 border-2 border-gold-500/70 shadow-md flex items-center justify-center shrink-0 overflow-hidden">
+          <img src="logo.png" alt="BR Bakery Logo" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-serif font-bold tracking-tight text-white flex items-center gap-2">
+            BR Bakery
+            <span class="text-[10px] sm:text-xs font-sans uppercase tracking-widest px-2 py-0.5 rounded-full bg-gold-500/20 text-gold-400 border border-gold-500/30 font-semibold">Since 1946</span>
+          </h1>
+          <p class="text-xs text-cream-300 font-medium hidden sm:block">Daily Fresh & Taste • Traditional Sweets & Cake Counter</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions in Header -->
+      <div class="flex items-center space-x-1.5 sm:space-x-3">
+        <button id="open-settings-btn" type="button" class="inline-flex items-center text-xs font-semibold px-2.5 sm:px-3 py-1.5 rounded-lg bg-burgundy-800/90 hover:bg-burgundy-700 text-cream-100 border border-gold-500/40 transition shadow-sm hover:shadow" title="Set and change default prices of sweets and boxes">
+          <i data-lucide="settings" class="w-3.5 h-3.5 sm:mr-1.5 text-gold-400"></i>
+          <span class="hidden sm:inline">Price Settings</span>
+          <span class="sm:hidden text-[11px]">Prices</span>
+        </button>
+        <button id="load-sample-btn" type="button" class="inline-flex items-center text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg bg-burgundy-800/80 hover:bg-burgundy-700 text-cream-100 border border-burgundy-700/60 transition shadow-sm hover:shadow" title="Load sample order from screenshot">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 sm:mr-1.5 text-gold-400"></i>
+          <span class="hidden sm:inline">Load Sample</span>
+          <span class="sm:hidden text-[11px]">Sample</span>
+        </button>
+        <button id="view-history-btn" type="button" class="relative inline-flex items-center text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg bg-cream-100/10 hover:bg-cream-100/20 text-cream-100 border border-cream-100/20 transition">
+          <i data-lucide="history" class="w-3.5 h-3.5 sm:mr-1.5"></i>
+          <span class="hidden sm:inline">History</span>
+          <span id="history-count-badge" class="ml-1 sm:ml-1.5 px-1.5 py-0.2 bg-burgundy-600 text-white text-[10px] rounded-full font-bold">0</span>
+        </button>
+        <button id="reset-order-btn" type="button" class="inline-flex items-center text-xs font-semibold px-2 sm:px-3 py-1.5 rounded-lg bg-burgundy-950/60 hover:bg-red-900/60 text-red-200 border border-red-900/40 transition" title="Reset current order">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 sm:mr-1.5"></i>
+          <span class="hidden sm:inline">Reset</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 flex-1 w-full pb-32 lg:pb-12">
+    
+    <!-- Top Mode Switcher (Sweet Billing vs Cake Maker Order) -->
+    <div class="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-2 sm:p-2.5 rounded-2xl shadow-soft border border-cream-200">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button id="nav-mode-sweets" type="button" class="mode-tab-btn active flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm bg-burgundy-950 text-cream-100 border border-burgundy-900">
+          <i data-lucide="candy" class="w-4 h-4 text-gold-400"></i>
+          <span>Sweet Order Billing</span>
+        </button>
+        <button id="nav-mode-cakes" type="button" class="mode-tab-btn flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition text-stone-600 hover:text-burgundy-950 hover:bg-cream-100 border border-transparent">
+          <i data-lucide="cake" class="w-4 h-4 text-burgundy-700"></i>
+          <span>🎂 Cake Order to Chef</span>
+          <span class="inline-block text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold ml-1">WhatsApp</span>
+        </button>
+      </div>
+      <div class="hidden sm:flex items-center text-xs text-stone-500 font-medium pr-3 gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Salesperson Quick Counter</span>
+      </div>
+    </div>
+
+    <!-- VIEW 1: SWEET ORDER SECTION (Active by default) -->
+    <div id="sweets-order-view" class="space-y-6">
+      
+      <!-- Hero / Subtitle -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-cream-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-burgundy-950">New Sweet Shop Order</h2>
+          <p class="text-stone-600 text-sm mt-1">Fill in the customer details and enter the quantity for each sweet. Leave unwanted sweets at zero.</p>
+        </div>
+        <div class="flex items-center gap-2 self-start md:self-auto bg-burgundy-50 border border-burgundy-200/80 rounded-xl px-4 py-2.5">
+          <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+          <span class="text-xs font-medium text-burgundy-900" id="live-time-status">Real-time Calculation Ready</span>
+        </div>
+      </div>
+
+      <!-- Dual Column Grid for Desktop / Stacked for Mobile -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- LEFT COLUMN: Input Forms (Sections 1, 2, 3) -->
+      <div class="lg:col-span-7 xl:col-span-8 space-y-8">
+        
+        <!-- SECTION 1: Customer Details -->
+        <section class="bg-white rounded-2xl p-5 sm:p-7 shadow-soft border border-cream-200 transition-all hover:border-burgundy-200">
+          <div class="flex items-center justify-between pb-4 mb-5 border-b border-cream-100">
+            <div class="flex items-center space-x-3">
+              <span class="w-7 h-7 rounded-lg bg-burgundy-900 text-cream-100 font-bold text-sm flex items-center justify-center font-serif">1</span>
+              <h3 class="text-lg sm:text-xl font-serif font-bold text-burgundy-950">Customer details</h3>
+            </div>
+            <span class="text-xs text-stone-400 font-medium">Step 1 of 3</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+            <!-- Customer Name -->
+            <div class="sm:col-span-2">
+              <label for="customer-name" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5">
+                Customer name <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                  <i data-lucide="user" class="w-4 h-4 text-burgundy-800/60"></i>
+                </div>
+                <input type="text" id="customer-name" placeholder="e.g. Ram Kumar" 
+                  class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-burgundy-800/30 focus:border-burgundy-800 font-medium transition text-sm">
+              </div>
+            </div>
+
+            <!-- Phone Number -->
+            <div>
+              <label for="customer-phone" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5">
+                Phone number <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                  <i data-lucide="phone" class="w-4 h-4 text-burgundy-800/60"></i>
+                </div>
+                <input type="tel" id="customer-phone" placeholder="e.g. 9876543210" 
+                  class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-burgundy-800/30 focus:border-burgundy-800 font-medium transition text-sm">
+              </div>
+            </div>
+
+            <!-- Delivery Date -->
+            <div>
+              <label for="delivery-date" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5">
+                Delivery date <span class="text-red-500">*</span>
+              </label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
+                  <i data-lucide="calendar" class="w-4 h-4 text-burgundy-800/60"></i>
+                </div>
+                <input type="date" id="delivery-date" 
+                  class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 focus:outline-none focus:ring-2 focus:ring-burgundy-800/30 focus:border-burgundy-800 font-medium transition text-sm">
+              </div>
+              <!-- Quick Date Pills -->
+              <div class="flex items-center gap-1.5 mt-2">
+                <button type="button" class="date-quick-btn text-[11px] px-2 py-0.5 rounded-md bg-cream-100 hover:bg-cream-200 text-stone-700 font-medium transition" data-days="0">Today</button>
+                <button type="button" class="date-quick-btn text-[11px] px-2 py-0.5 rounded-md bg-cream-100 hover:bg-cream-200 text-stone-700 font-medium transition" data-days="1">Tomorrow</button>
+                <button type="button" class="date-quick-btn text-[11px] px-2 py-0.5 rounded-md bg-cream-100 hover:bg-cream-200 text-stone-700 font-medium transition" data-days="3">+3 Days</button>
+                <button type="button" class="date-quick-btn text-[11px] px-2 py-0.5 rounded-md bg-cream-100 hover:bg-cream-200 text-stone-700 font-medium transition" data-days="7">+1 Week</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: Sweet Quantities -->
+        <section class="bg-white rounded-2xl p-5 sm:p-7 shadow-soft border border-cream-200 transition-all hover:border-burgundy-200">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-cream-100 gap-3">
+            <div class="flex items-center space-x-3">
+              <span class="w-7 h-7 rounded-lg bg-burgundy-900 text-cream-100 font-bold text-sm flex items-center justify-center font-serif">2</span>
+              <div>
+                <h3 class="text-lg sm:text-xl font-serif font-bold text-burgundy-950">Sweet quantities</h3>
+                <p class="text-xs text-stone-500">Enter quantity per piece. Rates are calculated automatically.</p>
+              </div>
+            </div>
+            
+            <!-- Category Filter / Search -->
+            <div class="flex items-center gap-2">
+              <div class="relative w-full sm:w-56">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                <input type="text" id="sweet-search" placeholder="Search 30+ sweets..." 
+                  class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-stone-200 bg-[#FAF7F2] focus:outline-none focus:ring-1 focus:ring-burgundy-800">
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Filter Pills -->
+          <div class="flex items-center gap-1.5 overflow-x-auto pb-2.5 mb-3 no-scrollbar text-xs">
+            <button type="button" class="category-pill active px-3 py-1 rounded-full font-semibold transition shrink-0 bg-burgundy-900 text-cream-100 border border-burgundy-900" data-cat="all">All (30)</button>
+            <button type="button" class="category-pill px-3 py-1 rounded-full font-semibold transition shrink-0 bg-cream-100 hover:bg-cream-200 text-stone-700 border border-cream-200" data-cat="laddu">Laddus</button>
+            <button type="button" class="category-pill px-3 py-1 rounded-full font-semibold transition shrink-0 bg-cream-100 hover:bg-cream-200 text-stone-700 border border-cream-200" data-cat="pak">Mysore Pak</button>
+            <button type="button" class="category-pill px-3 py-1 rounded-full font-semibold transition shrink-0 bg-cream-100 hover:bg-cream-200 text-stone-700 border border-cream-200" data-cat="barfi">Barfi & Kaju</button>
+            <button type="button" class="category-pill px-3 py-1 rounded-full font-semibold transition shrink-0 bg-cream-100 hover:bg-cream-200 text-stone-700 border border-cream-200" data-cat="peda">Pedas & Halwa</button>
+            <button type="button" class="category-pill px-3 py-1 rounded-full font-semibold transition shrink-0 bg-cream-100 hover:bg-cream-200 text-stone-700 border border-cream-200" data-cat="traditional">Snacks & Others</button>
+            <button type="button" id="filter-selected-pill" class="category-pill px-3 py-1 rounded-full font-semibold transition shrink-0 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 ml-auto" data-cat="selected">
+              ✓ Selected Only (<span id="selected-filter-count">0</span>)
+            </button>
+          </div>
+
+          <!-- Quick Fill helpers -->
+          <div class="flex items-center justify-between mb-4 px-1 text-xs text-stone-500">
+            <span>Sweet Item</span>
+            <div class="flex items-center gap-6 pr-2">
+              <span class="w-36 text-center">Quantity (pcs)</span>
+              <span class="w-16 text-right font-medium">Subtotal</span>
+            </div>
+          </div>
+
+          <!-- Sweets List Container -->
+          <div id="sweets-list" class="space-y-3">
+            <!-- Items will be rendered dynamically by JavaScript -->
+          </div>
+
+          <!-- Other Sweets (Optional) Custom Items Section -->
+          <div class="mt-6 pt-5 border-t border-cream-200">
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h4 class="text-sm font-bold text-burgundy-950 flex items-center gap-1.5">
+                  <i data-lucide="plus-circle" class="w-4 h-4 text-burgundy-700"></i>
+                  Other sweets (optional)
+                </h4>
+                <p class="text-xs text-stone-500">Add any custom or special sweet not listed above</p>
+              </div>
+              <button id="add-custom-sweet-btn" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-burgundy-50 text-burgundy-900 hover:bg-burgundy-100 border border-burgundy-200 transition flex items-center gap-1">
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Add Item</span>
+              </button>
+            </div>
+
+            <!-- Custom items container -->
+            <div id="custom-sweets-container" class="space-y-3">
+              <!-- Custom sweet rows inserted here -->
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: Box Quantities & Notes -->
+        <section class="bg-white rounded-2xl p-5 sm:p-7 shadow-soft border border-cream-200 transition-all hover:border-burgundy-200">
+          <div class="flex items-center justify-between pb-4 mb-5 border-b border-cream-100">
+            <div class="flex items-center space-x-3">
+              <span class="w-7 h-7 rounded-lg bg-burgundy-900 text-cream-100 font-bold text-sm flex items-center justify-center font-serif">3</span>
+              <div>
+                <h3 class="text-lg sm:text-xl font-serif font-bold text-burgundy-950">Box quantities</h3>
+                <p class="text-xs text-stone-500">Box charges: 3-item (₹10), 5-item (₹10), 7-item (₹15). Enter required quantities.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smart Packaging Capacity Indicator -->
+          <div id="packaging-helper" class="mb-5 p-3.5 bg-cream-50 rounded-xl border border-cream-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2">
+              <div class="p-1.5 rounded-lg bg-burgundy-100 text-burgundy-900">
+                <i data-lucide="package" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <span class="font-bold text-stone-800">Total Sweets to Pack: </span>
+                <span id="pack-total-sweets" class="font-extrabold text-burgundy-900 text-sm">0 pcs</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-stone-600">Total Box Capacity: </span>
+              <span id="pack-total-capacity" class="font-bold text-stone-800">0 pcs</span>
+              <span id="pack-status-badge" class="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-stone-200 text-stone-700">0 boxes</span>
+            </div>
+          </div>
+
+          <!-- Boxes List -->
+          <div id="boxes-list" class="space-y-3">
+            <!-- Box rows will be populated by JavaScript -->
+          </div>
+
+          <!-- Additional Notes -->
+          <div class="mt-6 pt-5 border-t border-cream-100">
+            <label for="additional-notes" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-2 flex items-center gap-1.5">
+              <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+              Additional notes
+            </label>
+            <textarea id="additional-notes" rows="3" placeholder="Any special instructions? (e.g. less sugar, individual ribbon wrapping, deliver before 10 AM, etc.)"
+              class="w-full px-4 py-3 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-burgundy-800/30 focus:border-burgundy-800 text-sm transition"></textarea>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Order Summary & Receipt Action (Desktop Sticky) -->
+      <div class="lg:col-span-5 xl:col-span-4">
+        <div class="lg:sticky lg:top-20 space-y-6">
+
+          <!-- Order Summary Card -->
+          <div class="bg-white rounded-2xl shadow-card border-2 border-burgundy-900/10 overflow-hidden relative">
+            
+            <!-- Top Burgundy Header Badge -->
+            <div class="bg-gradient-to-r from-burgundy-950 via-burgundy-900 to-burgundy-950 px-6 py-4 text-cream-100 flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <i data-lucide="receipt" class="w-5 h-5 text-gold-400"></i>
+                <h3 class="font-serif font-bold text-lg tracking-wide text-white">4. Order total</h3>
+              </div>
+              <span id="summary-items-count" class="text-xs bg-burgundy-800/90 text-gold-300 font-semibold px-2.5 py-1 rounded-full border border-burgundy-700">
+                0 items
+              </span>
+            </div>
+
+            <div class="p-6 space-y-5">
+              
+              <!-- Customer Quick Preview -->
+              <div id="summary-customer-preview" class="p-3 bg-cream-50/80 rounded-xl border border-cream-200/80 text-xs space-y-1">
+                <div class="flex justify-between">
+                  <span class="text-stone-500 font-medium">Customer:</span>
+                  <span id="preview-cust-name" class="font-bold text-stone-800">Ram</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-stone-500 font-medium">Phone:</span>
+                  <span id="preview-cust-phone" class="font-medium text-stone-700">-</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-stone-500 font-medium">Delivery Date:</span>
+                  <span id="preview-cust-date" class="font-semibold text-burgundy-900">-</span>
+                </div>
+              </div>
+
+              <!-- Selected Items List Scrollable -->
+              <div>
+                <div class="flex justify-between items-center text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">
+                  <span>Selected Items</span>
+                  <button id="clear-items-btn" class="text-[11px] text-red-600 hover:text-red-700 normal-case font-semibold">Clear items</button>
+                </div>
+                <div id="summary-items-list" class="max-h-48 overflow-y-auto space-y-2 pr-1 divide-y divide-cream-100 text-xs">
+                  <div class="py-4 text-center text-stone-400 italic">No sweets selected yet</div>
+                </div>
+              </div>
+
+              <!-- Price Breakdown -->
+              <div class="pt-4 border-t border-cream-200 space-y-2.5 text-sm">
+                <div class="flex justify-between text-stone-600">
+                  <span>Sweet subtotal</span>
+                  <span id="summary-sweet-subtotal" class="font-bold text-stone-800">₹0</span>
+                </div>
+                
+                <div class="flex justify-between text-stone-600">
+                  <span>Box charges</span>
+                  <span id="summary-box-charges" class="font-bold text-stone-800">₹0</span>
+                </div>
+
+                <!-- Advance payment / Discount row -->
+                <div class="pt-2 border-t border-cream-100 flex items-center justify-between text-xs">
+                  <span class="text-stone-500">Advance Paid (optional)</span>
+                  <div class="flex items-center">
+                    <span class="mr-1 text-stone-400">₹</span>
+                    <input type="number" id="advance-paid-input" min="0" placeholder="0" class="w-20 text-right py-1 px-2 text-xs rounded border border-stone-200 bg-cream-50 focus:outline-none focus:ring-1 focus:ring-burgundy-800 font-bold">
+                  </div>
+                </div>
+
+                <!-- Grand Total Display Matching Screenshot -->
+                <div class="pt-4 border-t-2 border-burgundy-900/10 flex items-baseline justify-between">
+                  <div>
+                    <span class="text-base font-serif font-extrabold text-stone-900 block">Grand total</span>
+                    <span id="balance-due-label" class="text-[11px] font-medium text-stone-500">Full amount due</span>
+                  </div>
+                  <div class="text-right">
+                    <div id="summary-grand-total" class="text-3xl font-extrabold text-emerald-600 font-sans tracking-tight">
+                      ₹0
+                    </div>
+                    <div id="summary-balance-due" class="text-xs font-bold text-burgundy-800 mt-0.5 hidden">
+                      Balance: ₹0
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Action Buttons matching screenshots -->
+              <div class="space-y-3 pt-2">
+                <!-- Copy Complete Order Button -->
+                <button id="copy-order-btn" type="button" 
+                  class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-stone-100 hover:bg-stone-200 text-stone-900 border border-stone-300 shadow-sm transition flex items-center justify-center space-x-2 active:scale-[0.99]">
+                  <i data-lucide="copy" class="w-4 h-4 text-stone-700"></i>
+                  <span>Copy Complete Order</span>
+                </button>
+
+                <!-- WhatsApp Quick Share Button -->
+                <button id="whatsapp-order-btn" type="button" 
+                  class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition flex items-center justify-center space-x-2 active:scale-[0.99]">
+                  <i data-lucide="message-circle" class="w-4 h-4 text-white"></i>
+                  <span>Send via WhatsApp</span>
+                </button>
+
+                <!-- Prepare Final Order Receipt Button -->
+                <button id="prepare-receipt-btn" type="button" 
+                  class="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-burgundy-950 hover:bg-burgundy-900 text-cream-100 shadow-md transition flex items-center justify-center space-x-2 active:scale-[0.99] border border-burgundy-800">
+                  <i data-lucide="file-check-2" class="w-4 h-4 text-gold-400"></i>
+                  <span>Prepare Final Order Receipt</span>
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Bakery Information Badge / Help -->
+          <div class="bg-gradient-to-br from-cream-100 to-cream-200/60 rounded-2xl p-4 border border-cream-300/80 text-xs text-stone-600 flex items-center gap-3">
+            <img src="logo.png" alt="BR Bakery Logo" class="w-12 h-12 object-contain shrink-0 rounded-full bg-white p-0.5 border border-cream-300 shadow-sm">
+            <div>
+              <p class="font-bold text-burgundy-950 text-sm">BR Bakery</p>
+              <p class="text-[11px] text-burgundy-800 font-semibold">Daily Fresh & Taste • Since 1946</p>
+              <p class="text-stone-500 mt-0.5 text-[11px]">Orders saved locally. Fast counter billing & WhatsApp receipts.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      </div> <!-- End of sweets grid -->
+    </div> <!-- END OF VIEW 1: SWEET ORDER VIEW -->
+
+    <!-- VIEW 2: CAKE ORDER FOR CAKE MAKER (WhatsApp Direct Dispatch) -->
+    <div id="cakes-order-view" class="space-y-6 hidden">
+      
+      <!-- Cake Hero Banner -->
+      <div class="bg-gradient-to-r from-burgundy-950 via-burgundy-900 to-burgundy-950 text-cream-100 rounded-2xl p-5 sm:p-6 shadow-soft border border-burgundy-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-full bg-gold-500/20 text-gold-400 border border-gold-500/30">
+              Kitchen Dispatch
+            </span>
+            <span class="text-xs text-cream-300">Salesperson Cake Counter</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-white">Cake Counter Order to Cake Maker</h2>
+          <p class="text-cream-200 text-xs sm:text-sm mt-1">Replace paper chits! Select cake flavors and quantities by weight (0.5 kg, 1 kg, etc.) and send directly to your baker on WhatsApp.</p>
+        </div>
+        <div class="flex items-center gap-2 self-start md:self-auto">
+          <button id="load-sample-cake-btn" type="button" class="text-xs font-semibold px-3 py-2 rounded-xl bg-burgundy-800/90 hover:bg-burgundy-700 text-cream-100 border border-gold-500/30 transition flex items-center gap-1.5 shadow-sm">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-gold-400"></i>
+            <span>Load Example (Blackforest)</span>
+          </button>
+          <button id="clear-cake-order-btn" type="button" class="text-xs font-semibold px-3 py-2 rounded-xl bg-burgundy-950/80 hover:bg-red-900/60 text-red-200 border border-red-900/40 transition flex items-center gap-1.5">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            <span>Clear</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dual Column Layout for Cakes -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- LEFT COLUMN: Cake Form -->
+        <div class="lg:col-span-7 xl:col-span-8 space-y-6">
+          
+          <!-- SECTION 1: Cake Maker Details & Schedule -->
+          <section class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-cream-200">
+            <div class="flex items-center justify-between pb-3.5 mb-4 border-b border-cream-100">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-6 h-6 rounded-lg bg-burgundy-900 text-cream-100 font-bold text-xs flex items-center justify-center font-serif">1</span>
+                <h3 class="text-base sm:text-lg font-serif font-bold text-burgundy-950">Cake Maker & Delivery Time</h3>
+              </div>
+              <span class="text-xs text-stone-400 font-medium">Chef Dispatch</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <!-- Cake Maker Name -->
+              <div>
+                <label for="cake-maker-name" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5">
+                  Cake Maker / Chef
+                </label>
+                <div class="relative">
+                  <i data-lucide="chef-hat" class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input type="text" id="cake-maker-name" placeholder="e.g. Raju Chef" value="Cake Maker (Chef)"
+                    class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-burgundy-800">
+                </div>
+              </div>
+
+              <!-- Cake Maker WhatsApp Phone -->
+              <div>
+                <label for="cake-maker-phone" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5">
+                  Chef WhatsApp No. <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <i data-lucide="phone" class="w-4 h-4 text-emerald-600 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input type="tel" id="cake-maker-phone" placeholder="e.g. 9876543210" 
+                    class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-burgundy-800">
+                </div>
+                <div class="flex items-center mt-1.5">
+                  <input type="checkbox" id="save-chef-default" checked class="w-3.5 h-3.5 rounded text-burgundy-900 focus:ring-burgundy-800 border-stone-300">
+                  <label for="save-chef-default" class="text-[11px] text-stone-500 ml-1.5">Remember chef number</label>
+                </div>
+              </div>
+
+              <!-- Required By Timing -->
+              <div>
+                <label for="cake-required-time" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5">
+                  Required By Time <span class="text-red-500">*</span>
+                </label>
+                <div class="relative">
+                  <i data-lucide="clock" class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                  <input type="text" id="cake-required-time" placeholder="e.g. Tomorrow 9:00 AM" value="Tomorrow Morning (9:00 AM)"
+                    class="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-burgundy-800">
+                </div>
+                <!-- Quick Time Pills -->
+                <div class="flex items-center gap-1 mt-1.5 overflow-x-auto no-scrollbar">
+                  <button type="button" class="cake-quick-time-btn text-[10px] px-1.5 py-0.5 rounded bg-cream-100 hover:bg-cream-200 text-stone-700 whitespace-nowrap">Today 4 PM</button>
+                  <button type="button" class="cake-quick-time-btn text-[10px] px-1.5 py-0.5 rounded bg-cream-100 hover:bg-cream-200 text-stone-700 whitespace-nowrap">Tomorrow 9 AM</button>
+                  <button type="button" class="cake-quick-time-btn text-[10px] px-1.5 py-0.5 rounded bg-cream-100 hover:bg-cream-200 text-stone-700 whitespace-nowrap">Urgent (2 hrs)</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 2: Cake Flavors & Quantities by Weight -->
+          <section class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-cream-200">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-4 border-b border-cream-100 gap-3">
+              <div class="flex items-center space-x-2.5">
+                <span class="w-6 h-6 rounded-lg bg-burgundy-900 text-cream-100 font-bold text-xs flex items-center justify-center font-serif">2</span>
+                <div>
+                  <h3 class="text-base sm:text-lg font-serif font-bold text-burgundy-950">Select Cakes & Quantities by Weight</h3>
+                  <p class="text-xs text-stone-500">Specify count for 0.5 kg (Half Kg), 1 kg, 1.5 kg, 2 kg, etc.</p>
+                </div>
+              </div>
+              <div class="relative w-full sm:w-48">
+                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                <input type="text" id="cake-flavor-search" placeholder="Search flavors..." 
+                  class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-stone-200 bg-[#FAF7F2] focus:outline-none focus:ring-1 focus:ring-burgundy-800">
+              </div>
+            </div>
+
+            <!-- Cakes List Container -->
+            <div id="cake-flavors-list" class="space-y-3.5">
+              <!-- Dynamically populated cake flavor cards with weight steppers -->
+            </div>
+
+            <!-- Add Custom Cake Flavor -->
+            <div class="mt-5 pt-4 border-t border-cream-100">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <h4 class="text-xs font-bold text-burgundy-950 flex items-center gap-1.5">
+                    <i data-lucide="plus-circle" class="w-3.5 h-3.5 text-burgundy-700"></i>
+                    Other / Special Cake Flavor
+                  </h4>
+                  <p class="text-[11px] text-stone-500">Need a flavor not listed above? Add it directly here.</p>
+                </div>
+                <button id="add-custom-cake-flavor-btn" type="button" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-burgundy-50 text-burgundy-900 hover:bg-burgundy-100 border border-burgundy-200 transition flex items-center gap-1">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>Add Flavor</span>
+                </button>
+              </div>
+              <div id="custom-cakes-container" class="space-y-2">
+                <!-- Custom cake items added here -->
+              </div>
+            </div>
+
+            <!-- General Instructions for Chef -->
+            <div class="mt-5 pt-4 border-t border-cream-100">
+              <label for="cake-general-notes" class="block text-xs font-bold uppercase tracking-wider text-burgundy-900 mb-1.5 flex items-center gap-1">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                Special Notes for Cake Maker (Optional)
+              </label>
+              <textarea id="cake-general-notes" rows="2" placeholder="e.g. Please put fresh cherries on Black Forest, all cakes must be eggless, deliver with knife and candles."
+                class="w-full px-3.5 py-2.5 rounded-xl border border-stone-200 bg-[#FCFAF7] text-stone-900 placeholder:text-stone-400 text-xs focus:outline-none focus:ring-1 focus:ring-burgundy-800"></textarea>
+            </div>
+          </section>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Live WhatsApp Slip & Actions -->
+        <div class="lg:col-span-5 xl:col-span-4">
+          <div class="lg:sticky lg:top-20 space-y-5">
+            
+            <!-- WhatsApp Dispatch Card -->
+            <div class="bg-white rounded-2xl shadow-card border-2 border-burgundy-900/10 overflow-hidden">
+              <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 px-5 py-4 text-white flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="message-circle" class="w-5 h-5 text-emerald-200"></i>
+                  <h3 class="font-serif font-bold text-base text-white">Chef WhatsApp Slip</h3>
+                </div>
+                <span id="cake-total-badge" class="text-xs bg-emerald-900/80 text-emerald-100 font-bold px-2.5 py-0.5 rounded-full border border-emerald-600">
+                  0 cakes
+                </span>
+              </div>
+
+              <div class="p-5 space-y-4">
+                
+                <!-- Metrics Bar -->
+                <div class="grid grid-cols-2 gap-2 text-center">
+                  <div class="p-2.5 bg-cream-50 rounded-xl border border-cream-200">
+                    <span class="text-[11px] text-stone-500 block">Total Cakes</span>
+                    <span id="slip-total-cakes" class="text-xl font-extrabold text-burgundy-950">0</span>
+                  </div>
+                  <div class="p-2.5 bg-cream-50 rounded-xl border border-cream-200">
+                    <span class="text-[11px] text-stone-500 block">Total Weight</span>
+                    <span id="slip-total-weight" class="text-xl font-extrabold text-emerald-700">0 kg</span>
+                  </div>
+                </div>
+
+                <!-- Live Message Preview Box -->
+                <div>
+                  <div class="flex justify-between items-center text-xs font-bold text-stone-500 uppercase tracking-wider mb-1.5">
+                    <span>Message Preview</span>
+                    <span class="text-[10px] text-emerald-700 font-semibold">Ready for WhatsApp</span>
+                  </div>
+                  <div id="cake-whatsapp-preview" class="p-3.5 bg-stone-900 text-stone-100 rounded-xl font-mono text-[11px] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto border border-stone-800 selection:bg-emerald-600">
+(No cakes added yet. Select flavors and quantities on the left)
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-2.5 pt-1">
+                  <!-- Send WhatsApp Button -->
+                  <button id="send-cake-whatsapp-btn" type="button" 
+                    class="w-full py-3.5 px-4 rounded-xl font-bold text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-md transition flex items-center justify-center space-x-2 active:scale-[0.99]">
+                    <i data-lucide="message-circle" class="w-5 h-5 text-white"></i>
+                    <span>Send Order to Cake Maker</span>
+                  </button>
+
+                  <!-- Copy Cake Order Button -->
+                  <button id="copy-cake-order-btn" type="button" 
+                    class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300 transition flex items-center justify-center space-x-2">
+                    <i data-lucide="copy" class="w-4 h-4 text-stone-600"></i>
+                    <span>Copy Message to Clipboard</span>
+                  </button>
+
+                  <!-- Print Kitchen Ticket (KOT) -->
+                  <button id="print-cake-kot-btn" type="button" 
+                    class="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-burgundy-950 hover:bg-burgundy-900 text-cream-100 transition flex items-center justify-center space-x-2 border border-burgundy-800">
+                    <i data-lucide="printer" class="w-4 h-4 text-gold-400"></i>
+                    <span>Print Kitchen Slip (KOT)</span>
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Helpful Counter Note -->
+            <div class="p-3.5 bg-cream-100/70 rounded-xl border border-cream-200 text-xs text-stone-600 flex items-start gap-2.5">
+              <i data-lucide="lightbulb" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+              <p>Cake orders sent via WhatsApp are saved in order history so you can review previous kitchen dispatches anytime.</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div> <!-- END OF VIEW 2: CAKE ORDER VIEW -->
+
+  </main>
+
+  <!-- Mobile Sticky Bottom Bar (Shows when scrolling on mobile) -->
+  <div id="mobile-sweets-bar" class="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-stone-200 shadow-floating px-4 py-3 z-30 flex items-center justify-between">
+    <div>
+      <span class="text-[10px] uppercase font-bold text-stone-500 tracking-wider block">Grand Total</span>
+      <span id="mobile-grand-total" class="text-xl font-extrabold text-emerald-600">₹0</span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button id="mobile-copy-btn" class="p-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300" title="Copy Order">
+        <i data-lucide="copy" class="w-4 h-4"></i>
+      </button>
+      <button id="mobile-whatsapp-btn" class="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" title="Send WhatsApp">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+      </button>
+      <button id="mobile-receipt-btn" class="px-3.5 py-2.5 rounded-xl bg-burgundy-950 hover:bg-burgundy-900 text-cream-100 font-bold text-xs flex items-center gap-1.5 shadow-sm">
+        <i data-lucide="receipt" class="w-4 h-4 text-gold-400"></i>
+        <span>Receipt</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Sticky Bottom Bar for CAKES -->
+  <div id="mobile-cakes-bar" class="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-stone-200 shadow-floating px-4 py-3 z-30 hidden items-center justify-between">
+    <div>
+      <span class="text-[10px] uppercase font-bold text-stone-500 tracking-wider block">Total Cakes</span>
+      <span id="mobile-cake-total-summary" class="text-lg font-extrabold text-emerald-700">0 cakes (0 kg)</span>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button id="mobile-cake-copy-btn" class="p-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-300" title="Copy Cake Slip">
+        <i data-lucide="copy" class="w-4 h-4"></i>
+      </button>
+      <button id="mobile-cake-whatsapp-btn" class="px-3.5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm">
+        <i data-lucide="message-circle" class="w-4 h-4"></i>
+        <span>Send to Chef</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- KITCHEN ORDER TICKET (KOT) MODAL FOR CAKE MAKER -->
+  <div id="cake-kot-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-cream-300 flex flex-col my-auto">
+      <div class="bg-burgundy-950 text-cream-100 px-6 py-4 flex items-center justify-between border-b border-burgundy-800">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="printer" class="w-5 h-5 text-gold-400"></i>
+          <h3 class="font-serif font-bold text-lg text-white">Kitchen Order Ticket (KOT)</h3>
+        </div>
+        <button id="close-cake-kot-modal" class="text-cream-300 hover:text-white p-1 rounded-lg hover:bg-burgundy-900 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-6 printable-receipt" id="printable-cake-kot">
+        <!-- Brand Header -->
+        <div class="text-center pb-4 border-b-2 border-dashed border-stone-400 flex flex-col items-center">
+          <img src="logo.png" alt="BR Bakery Logo" class="w-16 h-16 object-contain mb-1">
+          <h2 class="text-2xl font-serif font-extrabold text-stone-900">BR BAKERY</h2>
+          <p class="text-[11px] uppercase tracking-widest font-bold text-burgundy-900">Daily Fresh & Taste • Since 1946</p>
+          <p class="text-xs font-semibold text-stone-600 mt-0.5">Cake Production Order / Kitchen Ticket</p>
+          <div class="mt-2 inline-block px-3 py-0.5 bg-stone-100 text-stone-800 rounded font-mono text-xs font-bold" id="kot-ticket-id">
+            #KOT-2041
+          </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="py-3 border-b border-stone-200 text-xs space-y-1">
+          <div class="flex justify-between"><span class="text-stone-500">To Cake Maker:</span><span id="kot-maker-name" class="font-bold text-stone-900">Raju Chef</span></div>
+          <div class="flex justify-between"><span class="text-stone-500">Required By:</span><span id="kot-required-time" class="font-extrabold text-burgundy-900">Tomorrow 9:00 AM</span></div>
+          <div class="flex justify-between"><span class="text-stone-500">Order Placed:</span><span id="kot-placed-time" class="font-medium text-stone-700">-</span></div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="py-3">
+          <table class="w-full text-xs text-left">
+            <thead>
+              <tr class="border-b border-stone-300 font-bold uppercase text-stone-700">
+                <th class="py-1">Cake Flavor</th>
+                <th class="py-1 text-center">Weight</th>
+                <th class="py-1 text-right">Quantity</th>
+              </tr>
+            </thead>
+            <tbody id="kot-items-tbody" class="divide-y divide-stone-100 text-stone-900 font-semibold">
+              <!-- populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary -->
+        <div class="pt-3 border-t-2 border-stone-300 flex justify-between font-bold text-sm">
+          <span>Total Cakes to Prepare:</span>
+          <span id="kot-total-count" class="text-base text-stone-900">0 cakes</span>
+        </div>
+
+        <!-- Notes -->
+        <div id="kot-notes-box" class="mt-3 p-2.5 bg-stone-50 rounded border border-stone-200 text-xs hidden">
+          <span class="font-bold block text-stone-700">Chef Instructions:</span>
+          <p id="kot-notes-text" class="italic text-stone-600"></p>
+        </div>
+      </div>
+
+      <div class="bg-stone-50 px-6 py-3.5 border-t border-stone-200 flex justify-end gap-2 no-print">
+        <button id="kot-print-action-btn" type="button" class="px-4 py-2 text-xs font-bold rounded-xl bg-burgundy-950 text-cream-100 flex items-center gap-1.5 shadow-sm">
+          <i data-lucide="printer" class="w-4 h-4 text-gold-400"></i>
+          <span>Print KOT Ticket</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPT MODAL (Prepared Final Order Receipt) -->
+  <div id="receipt-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-cream-300 flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="bg-burgundy-950 text-cream-100 px-6 py-4 flex items-center justify-between border-b border-burgundy-800">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="file-text" class="w-5 h-5 text-gold-400"></i>
+          <h3 class="font-serif font-bold text-lg text-white">Final Order Receipt</h3>
+        </div>
+        <button id="close-receipt-modal" class="text-cream-300 hover:text-white p-1 rounded-lg hover:bg-burgundy-900 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Printable Receipt Canvas Area -->
+      <div class="p-6 sm:p-8 space-y-6 printable-receipt" id="printable-invoice">
+        
+        <!-- Bakery Brand Header -->
+        <div class="text-center pb-5 border-b-2 border-dashed border-stone-200 flex flex-col items-center">
+          <img src="logo.png" alt="BR Bakery Logo" class="w-20 h-20 object-contain mb-2 drop-shadow-sm">
+          <h2 class="text-3xl font-serif font-extrabold text-burgundy-950 tracking-tight">BR BAKERY</h2>
+          <p class="text-xs uppercase tracking-widest text-burgundy-800 font-bold mt-0.5">Daily Fresh & Taste • Since 1946</p>
+          <p class="text-xs text-stone-500 mt-1">Main Market Road • Quality Traditional Sweets & Bakery</p>
+          <div class="mt-3 inline-block px-3 py-1 bg-burgundy-50 border border-burgundy-200 text-burgundy-950 rounded-full text-xs font-bold">
+            ORDER ESTIMATE & INVOICE
+          </div>
+        </div>
+
+        <!-- Order Meta Details -->
+        <div class="grid grid-cols-2 gap-3 text-xs bg-cream-50 p-3.5 rounded-xl border border-cream-200">
+          <div>
+            <span class="text-stone-500 block">Customer Name</span>
+            <span id="modal-cust-name" class="font-bold text-stone-900 text-sm">Ram</span>
+          </div>
+          <div class="text-right">
+            <span class="text-stone-500 block">Phone</span>
+            <span id="modal-cust-phone" class="font-bold text-stone-900 text-sm">-</span>
+          </div>
+          <div>
+            <span class="text-stone-500 block">Delivery Date</span>
+            <span id="modal-delivery-date" class="font-bold text-burgundy-950 text-sm">-</span>
+          </div>
+          <div class="text-right">
+            <span class="text-stone-500 block">Order Date / ID</span>
+            <span id="modal-order-id" class="font-mono font-semibold text-stone-700">#BR-1024</span>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div>
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="border-b-2 border-stone-200 text-burgundy-950 font-bold uppercase tracking-wider">
+                <th class="py-2">Item Description</th>
+                <th class="py-2 text-center">Rate</th>
+                <th class="py-2 text-center">Qty</th>
+                <th class="py-2 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="modal-items-tbody" class="divide-y divide-stone-100 text-stone-800">
+              <!-- Item rows populated here -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Calculations Summary -->
+        <div class="pt-3 border-t-2 border-stone-200 space-y-2 text-xs">
+          <div class="flex justify-between text-stone-600">
+            <span>Sweets Subtotal:</span>
+            <span id="modal-sweet-subtotal" class="font-semibold text-stone-900">₹0</span>
+          </div>
+          <div class="flex justify-between text-stone-600">
+            <span>Box Packaging Charges:</span>
+            <span id="modal-box-charges" class="font-semibold text-stone-900">₹0</span>
+          </div>
+          <div id="modal-advance-row" class="flex justify-between text-stone-600 hidden">
+            <span>Advance Paid:</span>
+            <span id="modal-advance-paid" class="font-semibold text-emerald-700">-₹0</span>
+          </div>
+          <div class="flex justify-between items-baseline pt-2 border-t border-stone-200 text-sm">
+            <span class="font-serif font-bold text-burgundy-950 text-base">Grand Total:</span>
+            <span id="modal-grand-total" class="font-extrabold text-xl text-emerald-700">₹0</span>
+          </div>
+          <div id="modal-balance-row" class="flex justify-between text-xs text-burgundy-900 font-bold pt-1 hidden">
+            <span>Balance Due on Delivery:</span>
+            <span id="modal-balance-due" class="text-sm">₹0</span>
+          </div>
+        </div>
+
+        <!-- Special Notes in Receipt -->
+        <div id="modal-notes-container" class="p-3 bg-amber-50/70 rounded-xl border border-amber-200/70 text-xs hidden">
+          <span class="font-bold text-amber-900 block mb-0.5">Customer Instructions:</span>
+          <p id="modal-notes-text" class="text-amber-800 italic"></p>
+        </div>
+
+        <!-- Footer Thank You Note -->
+        <div class="text-center pt-3 border-t border-dashed border-stone-300 text-[11px] text-stone-500 space-y-1">
+          <p class="font-medium text-stone-700">Thank you for your order with BR Bakery!</p>
+          <p>Please present this receipt during delivery / pickup.</p>
+        </div>
+
+      </div>
+
+      <!-- Modal Action Buttons (Not Printed) -->
+      <div class="bg-stone-50 px-6 py-4 border-t border-stone-200 flex flex-wrap items-center justify-end gap-3 no-print">
+        <button id="modal-whatsapp-share-btn" type="button" class="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center gap-1.5 transition">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Share to WhatsApp</span>
+        </button>
+        <button id="modal-print-btn" type="button" class="px-4 py-2 text-xs font-bold rounded-xl bg-burgundy-950 hover:bg-burgundy-900 text-cream-100 flex items-center gap-1.5 transition shadow-sm">
+          <i data-lucide="printer" class="w-4 h-4 text-gold-400"></i>
+          <span>Print Receipt</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ORDER HISTORY MODAL -->
+  <div id="history-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl border border-cream-300 flex flex-col my-auto">
+      <div class="bg-burgundy-950 text-cream-100 px-6 py-4 flex items-center justify-between border-b border-burgundy-800">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="history" class="w-5 h-5 text-gold-400"></i>
+          <h3 class="font-serif font-bold text-lg text-white">Previous Orders History</h3>
+        </div>
+        <button id="close-history-modal" class="text-cream-300 hover:text-white p-1 rounded-lg hover:bg-burgundy-900 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div id="history-empty" class="text-center py-10 text-stone-400">
+          <i data-lucide="inbox" class="w-10 h-10 mx-auto text-stone-300 mb-2"></i>
+          <p class="font-medium">No saved orders yet</p>
+          <p class="text-xs text-stone-400 mt-1">Orders you prepare receipts for will be saved here automatically.</p>
+        </div>
+        <div id="history-list" class="space-y-3">
+          <!-- History items loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICE SETTINGS MODAL -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-cream-300 flex flex-col my-auto animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Modal Header -->
+      <div class="bg-burgundy-950 text-cream-100 px-6 py-4 flex items-center justify-between border-b border-burgundy-800">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-8 h-8 rounded-lg bg-burgundy-900 border border-gold-500/30 flex items-center justify-center text-gold-400">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-serif font-bold text-lg text-white">Price Settings</h3>
+            <p class="text-[11px] text-cream-300">Set and update default rates for sweets and boxes</p>
+          </div>
+        </div>
+        <button id="close-settings-modal" class="text-cream-300 hover:text-white p-1 rounded-lg hover:bg-burgundy-900 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Settings Tabs -->
+      <div class="flex border-b border-cream-200 bg-cream-50/80 px-6 pt-3 text-xs font-bold gap-3">
+        <button id="tab-btn-sweets" type="button" class="settings-tab-btn active pb-2.5 border-b-2 border-burgundy-900 text-burgundy-950 flex items-center gap-1.5 transition">
+          <i data-lucide="cake" class="w-3.5 h-3.5 text-burgundy-700"></i>
+          <span>Sweets Prices (<span id="settings-sweets-count">30</span>)</span>
+        </button>
+        <button id="tab-btn-boxes" type="button" class="settings-tab-btn pb-2.5 border-b-2 border-transparent text-stone-500 hover:text-stone-800 flex items-center gap-1.5 transition">
+          <i data-lucide="package" class="w-3.5 h-3.5 text-stone-400"></i>
+          <span>Box Packaging Charges</span>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-5 sm:p-6 space-y-4 flex-1 overflow-y-auto">
+        
+        <!-- Tab 1: Sweets Prices Panel -->
+        <div id="settings-tab-sweets-panel" class="space-y-3">
+          <div class="flex items-center justify-between gap-3 pb-2 border-b border-cream-100">
+            <div class="relative w-full sm:w-64">
+              <i data-lucide="search" class="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-stone-400"></i>
+              <input type="text" id="settings-sweet-search" placeholder="Search sweets in settings..." 
+                class="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-stone-200 bg-[#FAF7F2] focus:outline-none focus:ring-1 focus:ring-burgundy-800">
+            </div>
+            <span class="text-[11px] text-stone-400 font-medium hidden sm:inline">Set price per piece (₹)</span>
+          </div>
+
+          <!-- Sweets Table in Settings -->
+          <div id="settings-sweets-list" class="space-y-2 max-h-[50vh] overflow-y-auto pr-1">
+            <!-- Dynamically populated list of sweet price inputs -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Box Packaging Panel -->
+        <div id="settings-tab-boxes-panel" class="space-y-3 hidden">
+          <p class="text-xs text-stone-500">Configure packaging cost and piece capacity for each box type:</p>
+          <div id="settings-boxes-list" class="space-y-3">
+            <!-- Dynamically populated box settings -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="bg-stone-50 px-6 py-3.5 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3">
+        <button id="reset-default-prices-btn" type="button" class="text-xs font-semibold px-3 py-2 rounded-xl text-stone-600 hover:text-red-700 hover:bg-red-50 border border-stone-200 transition flex items-center gap-1.5">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+          <span>Reset to Official Defaults</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button id="cancel-settings-btn" type="button" class="text-xs font-semibold px-4 py-2 rounded-xl text-stone-700 hover:bg-stone-200/80 transition">
+            Cancel
+          </button>
+          <button id="save-settings-btn" type="button" class="text-xs font-bold px-4 py-2 rounded-xl bg-burgundy-950 hover:bg-burgundy-900 text-cream-100 flex items-center gap-1.5 shadow-sm transition">
+            <i data-lucide="check" class="w-4 h-4 text-gold-400"></i>
+            <span>Save Price Changes</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-20 sm:bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 flex items-center gap-3 bg-burgundy-950 text-cream-100 px-4 py-3 rounded-xl shadow-floating border border-burgundy-800">
+    <div id="toast-icon" class="text-emerald-400">
+      <i data-lucide="check-circle" class="w-5 h-5"></i>
+    </div>
+    <div id="toast-message" class="text-xs font-semibold">Order copied to clipboard!</div>
+  </div>
+
+  <!-- Custom Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

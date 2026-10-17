@@ -1,0 +1,87 @@
+/* BR Bakery Sweet & Cake Order - Custom Stylesheet */
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF7F2;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d9c6b3;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ba3251;
+}
+
+/* Number input clean display */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Custom sweet item active state */
+.sweet-item-active, .cake-item-active {
+  border-color: #812137 !important;
+  background-color: #FFFDF9 !important;
+  box-shadow: 0 4px 12px -2px rgba(109, 31, 50, 0.08);
+}
+
+/* Input Focus Ring */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+}
+
+/* Subtle pattern for headers */
+.bg-bakery-pattern {
+  background-color: #6d1f32;
+  background-image: radial-gradient(#812137 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Hide scrollbars for pill bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Print Stylesheet for Physical Thermal or A4 Receipt and Kitchen Order Ticket */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  #printable-invoice, #printable-invoice *,
+  #printable-cake-kot, #printable-cake-kot * {
+    visibility: visible;
+  }
+
+  #printable-invoice, #printable-cake-kot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
