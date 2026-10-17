@@ -818,7 +818,7 @@ function renderSweetsList() {
           <div class="min-w-0">
             <h4 class="font-bold text-stone-900 text-sm sm:text-base leading-snug">${sweet.name}</h4>
             <div class="flex items-center gap-1.5 mt-0.5">
-              <span class="text-xs font-semibold text-burgundy-900 bg-burgundy-50 px-2 py-0.5 rounded border border-burgundy-100">
+              <span class="text-xs font-semibold text-burgundy-900 bg-burgundy-50 px-2 py-0.5 rounded border border-burgundy-100 shrink-0">
                 ₹${sweet.price} ${sweet.unit}
               </span>
             </div>
@@ -1209,6 +1209,89 @@ function updateCalculations() {
   if (previewCustPhone) previewCustPhone.textContent = state.customer.phone || '-';
   if (previewCustDate) previewCustDate.textContent = state.customer.date || '-';
 
+  // 1-Box Cost Calculation
+  let costPerBox = 0;
+  let sweetsPerBoxCost = 0;
+  let boxPerBoxCost = 0;
+
+  if (totalBoxesCount > 0) {
+    costPerBox = grandTotal / totalBoxesCount;
+    sweetsPerBoxCost = sweetSubtotal / totalBoxesCount;
+    boxPerBoxCost = boxCharges / totalBoxesCount;
+  }
+
+  // Update Section 3 Single Box Cost Banner
+  const costPerSingleBoxElem = document.getElementById('cost-per-single-box');
+  const boxCostFormulaElem = document.getElementById('box-cost-formula-text');
+  const costPerBoxBadge = document.getElementById('cost-per-box-badge');
+
+  if (costPerSingleBoxElem) {
+    if (totalBoxesCount > 0) {
+      const roundedBox = Math.round(costPerBox);
+      const isWhole = Math.abs(costPerBox - roundedBox) < 0.01;
+      costPerSingleBoxElem.innerHTML = `₹${isWhole ? roundedBox.toLocaleString('en-IN') : costPerBox.toFixed(1)} <span class="text-xs font-semibold text-stone-500 font-sans">/ box</span>`;
+      
+      if (boxCostFormulaElem) {
+        const roundedSweets = Math.round(sweetsPerBoxCost);
+        const roundedBoxPkg = Math.round(boxPerBoxCost);
+        boxCostFormulaElem.innerHTML = `<strong>₹${roundedSweets}</strong> sweets + <strong>₹${roundedBoxPkg}</strong> box packaging per box`;
+      }
+      if (costPerBoxBadge) {
+        costPerBoxBadge.className = 'inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+        costPerBoxBadge.textContent = `${totalBoxesCount} box${totalBoxesCount === 1 ? '' : 'es'} in order`;
+      }
+    } else if (sweetPieces > 0) {
+      costPerSingleBoxElem.innerHTML = `₹0 <span class="text-xs font-semibold text-stone-500 font-sans">/ box</span>`;
+      if (boxCostFormulaElem) {
+        boxCostFormulaElem.textContent = 'Add box packaging count below to calculate per-box cost';
+      }
+      if (costPerBoxBadge) {
+        costPerBoxBadge.className = 'inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+        costPerBoxBadge.textContent = '0 boxes selected';
+      }
+    } else {
+      costPerSingleBoxElem.innerHTML = `₹0 <span class="text-xs font-semibold text-stone-500 font-sans">/ box</span>`;
+      if (boxCostFormulaElem) {
+        boxCostFormulaElem.textContent = 'Select sweets & box packaging to calculate per-box price';
+      }
+      if (costPerBoxBadge) {
+        costPerBoxBadge.className = 'inline-block mt-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-cream-200 text-stone-700';
+        costPerBoxBadge.textContent = '0 boxes ordered';
+      }
+    }
+  }
+
+  // Update Section 4 Summary Card Cost per 1 Box
+  const summaryCostPerBoxElem = document.getElementById('summary-cost-per-box');
+  const summaryCostPerBoxDetail = document.getElementById('summary-cost-per-box-detail');
+  if (summaryCostPerBoxElem) {
+    if (totalBoxesCount > 0) {
+      const roundedBox = Math.round(costPerBox);
+      const isWhole = Math.abs(costPerBox - roundedBox) < 0.01;
+      summaryCostPerBoxElem.textContent = `₹${isWhole ? roundedBox.toLocaleString('en-IN') : costPerBox.toFixed(1)} / box`;
+      if (summaryCostPerBoxDetail) {
+        summaryCostPerBoxDetail.textContent = `Across ${totalBoxesCount} box${totalBoxesCount === 1 ? '' : 'es'} (₹${Math.round(sweetsPerBoxCost)} sweets + ₹${Math.round(boxPerBoxCost)} box)`;
+      }
+    } else {
+      summaryCostPerBoxElem.textContent = `₹0 / box`;
+      if (summaryCostPerBoxDetail) {
+        summaryCostPerBoxDetail.textContent = `Sweets + Box packing`;
+      }
+    }
+  }
+
+  // Update Mobile Sticky Bottom Bar
+  const mobilePerBoxCost = document.getElementById('mobile-per-box-cost');
+  if (mobilePerBoxCost) {
+    if (totalBoxesCount > 0) {
+      const roundedBox = Math.round(costPerBox);
+      mobilePerBoxCost.classList.remove('hidden');
+      mobilePerBoxCost.textContent = `(₹${roundedBox}/box)`;
+    } else {
+      mobilePerBoxCost.classList.add('hidden');
+    }
+  }
+
   return {
     sweetPieces,
     sweetSubtotal,
@@ -1218,6 +1301,10 @@ function updateCalculations() {
     balanceDue,
     activeSweetsList,
     activeBoxesList,
+    totalBoxesCount,
+    costPerBox,
+    sweetsPerBoxCost,
+    boxPerBoxCost,
   };
 }
 
@@ -1768,6 +1855,9 @@ function generateOrderText() {
   text += `━━━━━━━━━━━━━━━━━━━━━\n`;
   text += `💰 *Sweet Subtotal:* ₹${calc.sweetSubtotal.toLocaleString('en-IN')}\n`;
   text += `📦 *Box Charges:* ₹${calc.boxCharges.toLocaleString('en-IN')}\n`;
+  if (calc.totalBoxesCount > 0) {
+    text += `🏷️ *Cost per 1 Box:* ₹${Math.round(calc.costPerBox).toLocaleString('en-IN')} (₹${Math.round(calc.sweetsPerBoxCost)} sweets + ₹${Math.round(calc.boxPerBoxCost)} box)\n`;
+  }
   if (calc.advance > 0) {
     text += `💳 *Advance Paid:* ₹${calc.advance.toLocaleString('en-IN')}\n`;
     text += `💵 *Balance Due:* ₹${calc.balanceDue.toLocaleString('en-IN')}\n`;
@@ -1861,6 +1951,8 @@ function openReceiptModal() {
   const sweetSub = document.getElementById('modal-sweet-subtotal');
   const boxCharges = document.getElementById('modal-box-charges');
   const grandTotal = document.getElementById('modal-grand-total');
+  const modalPerBoxRow = document.getElementById('modal-per-box-row');
+  const modalCostPerBox = document.getElementById('modal-cost-per-box');
   const advRow = document.getElementById('modal-advance-row');
   const advPaid = document.getElementById('modal-advance-paid');
   const balRow = document.getElementById('modal-balance-row');
@@ -1869,6 +1961,13 @@ function openReceiptModal() {
   if (sweetSub) sweetSub.textContent = `₹${calc.sweetSubtotal.toLocaleString('en-IN')}`;
   if (boxCharges) boxCharges.textContent = `₹${calc.boxCharges.toLocaleString('en-IN')}`;
   if (grandTotal) grandTotal.textContent = `₹${calc.grandTotal.toLocaleString('en-IN')}`;
+
+  if (calc.totalBoxesCount > 0) {
+    if (modalPerBoxRow) modalPerBoxRow.classList.remove('hidden');
+    if (modalCostPerBox) modalCostPerBox.textContent = `₹${Math.round(calc.costPerBox).toLocaleString('en-IN')} / box`;
+  } else {
+    if (modalPerBoxRow) modalPerBoxRow.classList.add('hidden');
+  }
 
   if (calc.advance > 0) {
     if (advRow) advRow.classList.remove('hidden');
