@@ -158,16 +158,19 @@ function switchAppMode(mode) {
   const mobileSweetsBar = document.getElementById('mobile-sweets-bar');
   const mobileCakesBar = document.getElementById('mobile-cakes-bar');
 
+  const activeClass = 'mode-tab-btn active flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-5 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition shadow-sm bg-burgundy-950 text-cream-100 border border-burgundy-900';
+  const inactiveClass = 'mode-tab-btn flex items-center justify-center gap-1.5 sm:gap-2 py-2 sm:py-2.5 px-2 sm:px-5 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition text-stone-600 hover:text-burgundy-950 hover:bg-cream-100 border border-transparent';
+
   if (mode === 'sweets') {
-    if (sweetsBtn) sweetsBtn.className = 'mode-tab-btn active flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm bg-burgundy-950 text-cream-100 border border-burgundy-900';
-    if (cakesBtn) cakesBtn.className = 'mode-tab-btn flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition text-stone-600 hover:text-burgundy-950 hover:bg-cream-100 border border-transparent';
+    if (sweetsBtn) sweetsBtn.className = activeClass;
+    if (cakesBtn) cakesBtn.className = inactiveClass;
     if (sweetsView) sweetsView.classList.remove('hidden');
     if (cakesView) cakesView.classList.add('hidden');
     if (mobileSweetsBar) mobileSweetsBar.classList.remove('hidden');
     if (mobileCakesBar) mobileCakesBar.classList.add('hidden');
   } else {
-    if (cakesBtn) cakesBtn.className = 'mode-tab-btn active flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition shadow-sm bg-burgundy-950 text-cream-100 border border-burgundy-900';
-    if (sweetsBtn) sweetsBtn.className = 'mode-tab-btn flex-1 sm:flex-initial flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition text-stone-600 hover:text-burgundy-950 hover:bg-cream-100 border border-transparent';
+    if (cakesBtn) cakesBtn.className = activeClass;
+    if (sweetsBtn) sweetsBtn.className = inactiveClass;
     if (sweetsView) sweetsView.classList.add('hidden');
     if (cakesView) cakesView.classList.remove('hidden');
     if (mobileSweetsBar) mobileSweetsBar.classList.add('hidden');
@@ -809,35 +812,35 @@ function renderSweetsList() {
     const isActive = qty > 0;
 
     return `
-      <div class="sweet-item-row p-3.5 sm:p-4 rounded-xl border ${isActive ? 'sweet-item-active' : 'border-stone-200 bg-white'} transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-burgundy-300" data-id="${sweet.id}">
+      <div class="sweet-item-row p-3 sm:p-4 rounded-xl border ${isActive ? 'sweet-item-active' : 'border-stone-200 bg-white'} transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 hover:border-burgundy-300" data-id="${sweet.id}">
         <!-- Item Name & Price -->
-        <div class="flex items-center justify-between sm:justify-start gap-3">
-          <div>
-            <h4 class="font-bold text-stone-900 text-sm sm:text-base">${sweet.name}</h4>
-            <div class="flex items-center gap-2 mt-0.5">
-              <span class="text-xs font-semibold text-burgundy-900 bg-burgundy-50 px-2.5 py-0.5 rounded-md border border-burgundy-100">
+        <div class="flex items-center justify-between sm:justify-start gap-2">
+          <div class="min-w-0">
+            <h4 class="font-bold text-stone-900 text-sm sm:text-base leading-snug">${sweet.name}</h4>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <span class="text-xs font-semibold text-burgundy-900 bg-burgundy-50 px-2 py-0.5 rounded border border-burgundy-100">
                 ₹${sweet.price} ${sweet.unit}
               </span>
             </div>
           </div>
           <!-- Mobile subtotal view -->
-          <div class="sm:hidden text-right">
-            <span class="text-xs text-stone-400 block">Subtotal</span>
+          <div class="sm:hidden text-right shrink-0">
+            <span class="text-[10px] uppercase font-semibold text-stone-400 block tracking-wider">Subtotal</span>
             <span class="font-bold text-burgundy-950 text-sm">₹${subtotal.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
         <!-- Controls & Subtotal -->
-        <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-0 border-cream-100">
+        <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-0 border-cream-100">
           
           <!-- Stepper buttons + Direct Number Input -->
-          <div class="flex items-center bg-[#FAF7F2] rounded-xl border border-stone-300 p-1">
+          <div class="flex items-center bg-[#FAF7F2] rounded-xl border border-stone-300 p-0.5 sm:p-1">
             <button type="button" class="w-8 h-8 rounded-lg bg-white text-stone-700 hover:bg-burgundy-900 hover:text-white transition flex items-center justify-center font-bold text-base shadow-sm border border-stone-200/80 active:scale-95" 
               onclick="adjustSweetQty('${sweet.id}', -1)" title="Decrease">
               -
             </button>
             <input type="number" min="0" value="${qty}" 
-              class="w-16 sm:w-20 text-center font-bold text-stone-900 text-sm bg-transparent border-0 focus:ring-0 p-0"
+              class="w-14 sm:w-20 text-center font-bold text-stone-900 text-sm bg-transparent border-0 focus:ring-0 p-0"
               onchange="setSweetQty('${sweet.id}', this.value)"
               oninput="setSweetQty('${sweet.id}', this.value)">
             <button type="button" class="w-8 h-8 rounded-lg bg-white text-stone-700 hover:bg-burgundy-900 hover:text-white transition flex items-center justify-center font-bold text-base shadow-sm border border-stone-200/80 active:scale-95" 
@@ -846,10 +849,11 @@ function renderSweetsList() {
             </button>
           </div>
 
-          <!-- Quick Bulk Presets -->
-          <div class="hidden md:flex items-center gap-1">
-            <button type="button" onclick="adjustSweetQty('${sweet.id}', 10)" class="text-[11px] font-semibold px-2 py-1 bg-cream-100 hover:bg-cream-200 rounded text-stone-700 transition">+10</button>
-            <button type="button" onclick="adjustSweetQty('${sweet.id}', 50)" class="text-[11px] font-semibold px-2 py-1 bg-cream-100 hover:bg-cream-200 rounded text-stone-700 transition">+50</button>
+          <!-- Quick Presets -->
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="adjustSweetQty('${sweet.id}', 10)" class="text-xs font-semibold px-2 py-1.5 bg-cream-100 hover:bg-cream-200 active:bg-cream-300 rounded-lg text-stone-700 transition border border-cream-200" title="Add 10 pcs">+10</button>
+            <button type="button" onclick="adjustSweetQty('${sweet.id}', 50)" class="text-xs font-semibold px-2 py-1.5 bg-cream-100 hover:bg-cream-200 active:bg-cream-300 rounded-lg text-stone-700 transition border border-cream-200 hidden sm:inline-block" title="Add 50 pcs">+50</button>
+            ${qty > 0 ? `<button type="button" onclick="setSweetQty('${sweet.id}', 0); renderSweetsList();" class="text-xs font-bold px-2 py-1.5 text-stone-400 hover:text-red-600 rounded-lg transition" title="Clear">✕</button>` : ''}
           </div>
 
           <!-- Desktop Subtotal Column -->
@@ -919,37 +923,43 @@ function renderBoxesList() {
     const isActive = qty > 0;
 
     return `
-      <div class="p-3.5 sm:p-4 rounded-xl border ${isActive ? 'sweet-item-active' : 'border-stone-200 bg-white'} transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-burgundy-300">
-        <div class="flex items-center justify-between sm:justify-start gap-3">
-          <div>
-            <h4 class="font-bold text-stone-900 text-sm sm:text-base">${box.name}</h4>
-            <div class="flex items-center gap-2 mt-0.5">
+      <div class="p-3 sm:p-4 rounded-xl border ${isActive ? 'sweet-item-active' : 'border-stone-200 bg-white'} transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3 hover:border-burgundy-300">
+        <div class="flex items-center justify-between sm:justify-start gap-2">
+          <div class="min-w-0">
+            <h4 class="font-bold text-stone-900 text-sm sm:text-base leading-snug">${box.name}</h4>
+            <div class="flex items-center gap-1.5 mt-0.5">
               <span class="text-xs font-semibold text-stone-600 bg-cream-100 px-2 py-0.5 rounded border border-cream-200">
                 ₹${box.price} each
               </span>
-              <span class="text-xs text-stone-400">Holds ${box.capacity} pieces</span>
+              <span class="text-[11px] text-stone-400">Holds ${box.capacity} pcs</span>
             </div>
           </div>
-          <div class="sm:hidden text-right">
-            <span class="text-xs text-stone-400 block">Subtotal</span>
+          <div class="sm:hidden text-right shrink-0">
+            <span class="text-[10px] uppercase font-semibold text-stone-400 block tracking-wider">Subtotal</span>
             <span class="font-bold text-burgundy-950 text-sm">₹${subtotal.toLocaleString('en-IN')}</span>
           </div>
         </div>
 
-        <div class="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-0 border-cream-100">
-          <div class="flex items-center bg-[#FAF7F2] rounded-xl border border-stone-300 p-1">
+        <div class="flex items-center justify-between sm:justify-end gap-2 sm:gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-0 border-cream-100">
+          <div class="flex items-center bg-[#FAF7F2] rounded-xl border border-stone-300 p-0.5 sm:p-1">
             <button type="button" class="w-8 h-8 rounded-lg bg-white text-stone-700 hover:bg-burgundy-900 hover:text-white transition flex items-center justify-center font-bold text-base shadow-sm border border-stone-200/80 active:scale-95" 
-              onclick="adjustBoxQty('${box.id}', -1)">
+              onclick="adjustBoxQty('${box.id}', -1)" title="Decrease">
               -
             </button>
             <input type="number" min="0" value="${qty}" 
-              class="w-16 sm:w-20 text-center font-bold text-stone-900 text-sm bg-transparent border-0 focus:ring-0 p-0"
+              class="w-14 sm:w-20 text-center font-bold text-stone-900 text-sm bg-transparent border-0 focus:ring-0 p-0"
               onchange="setBoxQty('${box.id}', this.value)"
               oninput="setBoxQty('${box.id}', this.value)">
             <button type="button" class="w-8 h-8 rounded-lg bg-white text-stone-700 hover:bg-burgundy-900 hover:text-white transition flex items-center justify-center font-bold text-base shadow-sm border border-stone-200/80 active:scale-95" 
-              onclick="adjustBoxQty('${box.id}', 1)">
+              onclick="adjustBoxQty('${box.id}', 1)" title="Increase">
               +
             </button>
+          </div>
+
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="adjustBoxQty('${box.id}', 5)" class="text-xs font-semibold px-2 py-1.5 bg-cream-100 hover:bg-cream-200 active:bg-cream-300 rounded-lg text-stone-700 transition border border-cream-200" title="Add 5 boxes">+5</button>
+            <button type="button" onclick="adjustBoxQty('${box.id}', 10)" class="text-xs font-semibold px-2 py-1.5 bg-cream-100 hover:bg-cream-200 active:bg-cream-300 rounded-lg text-stone-700 transition border border-cream-200 hidden sm:inline-block" title="Add 10 boxes">+10</button>
+            ${qty > 0 ? `<button type="button" onclick="setBoxQty('${box.id}', 0); renderBoxesList();" class="text-xs font-bold px-2 py-1.5 text-stone-400 hover:text-red-600 rounded-lg transition" title="Clear">✕</button>` : ''}
           </div>
 
           <div class="hidden sm:block w-20 text-right">

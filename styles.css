@@ -1,9 +1,15 @@
 /* BR Bakery Sweet & Cake Order - Custom Stylesheet */
 
+/* Mobile-first base rules */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -29,11 +35,16 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* Custom sweet item active state */
+/* Custom sweet & cake item active state */
 .sweet-item-active, .cake-item-active {
   border-color: #812137 !important;
   background-color: #FFFDF9 !important;
   box-shadow: 0 4px 12px -2px rgba(109, 31, 50, 0.08);
+}
+
+/* Touch active state feedback */
+button:active {
+  transform: scale(0.97);
 }
 
 /* Input Focus Ring */
@@ -55,6 +66,11 @@ input:focus, textarea:focus, select:focus {
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.smooth-touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 /* Print Stylesheet for Physical Thermal or A4 Receipt and Kitchen Order Ticket */
